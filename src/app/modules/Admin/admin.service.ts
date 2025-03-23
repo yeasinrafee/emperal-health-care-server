@@ -18,8 +18,6 @@ const getAllAdminFromDB = async (params: any) => {
     });
   }
 
-  console.log(Object.keys(filterData));
-
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
       AND: Object.keys(filterData).map((key) => ({
