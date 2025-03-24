@@ -3,12 +3,17 @@ import { adminSearchableFields } from './admin.constant';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 
+// Get All Admins from DB
 const getAllAdminFromDB = async (params: any, options: any) => {
+  const { searchTerm, ...filterData } = params;
+
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
-  const { searchTerm, ...filterData } = params;
-  const andConditions: Prisma.AdminWhereInput[] = [];
 
+  const andConditions: Prisma.AdminWhereInput[] = [];
+  const whereConditions: Prisma.AdminWhereInput = { AND: andConditions };
+
+  // Search Data
   if (params.searchTerm) {
     andConditions.push({
       OR: adminSearchableFields.map((field) => ({
@@ -20,6 +25,7 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     });
   }
 
+  // Filter data
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
       AND: Object.keys(filterData).map((key) => ({
@@ -30,7 +36,8 @@ const getAllAdminFromDB = async (params: any, options: any) => {
     });
   }
 
-  const whereConditions: Prisma.AdminWhereInput = { AND: andConditions };
+  // Pagination and sorting
+
   const result = await prisma.admin.findMany({
     where: whereConditions,
     skip,
@@ -44,9 +51,31 @@ const getAllAdminFromDB = async (params: any, options: any) => {
             createdAt: 'desc',
           },
   });
+
+  const total = await prisma.admin.count({
+    where: whereConditions,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+// Get Single Admin From DB
+const getSingleAdminFromDB = async (id: string) => {
+  const result = await prisma.admin.findUnique({
+    where: {
+      id,
+    },
+  });
   return result;
 };
 
 export const AdminService = {
   getAllAdminFromDB,
+  getSingleAdminFromDB,
 };
