@@ -44,7 +44,28 @@ const getSingleAdminFromDB = async (req: Request, res: Response) => {
   }
 };
 
+// Update Admin in DB
+const updateAdminInDB = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const result = await AdminService.updateAdminInDB(id, data);
+    res.status(200).json({
+      success: true,
+      message: 'Admin updated successfully!',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.name || 'Something went wrong!',
+      error: err,
+    });
+  }
+};
+
 export const AdminController = {
   getAllAdminFromDB,
   getSingleAdminFromDB,
+  updateAdminInDB,
 };
