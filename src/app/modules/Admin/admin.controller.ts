@@ -2,28 +2,7 @@ import { Request, Response } from 'express';
 import { AdminService } from './admin.service';
 import pick from '../../../shared/pick';
 import { adminFilterableFields } from './admin.constant';
-
-const sendResponse = <T>(
-  res: Response,
-  jsonData: {
-    statusCode: number;
-    success: boolean;
-    message: string;
-    meta?: {
-      page: number;
-      limit: number;
-      total: number;
-    };
-    data: T | null | undefined;
-  }
-) => {
-  res.status(jsonData.statusCode).json({
-    success: jsonData.success,
-    message: jsonData.message,
-    meta: jsonData.meta || null || undefined,
-    data: jsonData.data || null || undefined,
-  });
-};
+import sendResponse from '../../../shared/sendResponse';
 
 // Get All Admins From DB
 const getAllAdminFromDB = async (req: Request, res: Response) => {
