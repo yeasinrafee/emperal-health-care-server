@@ -35,6 +35,9 @@ const getAllAdminFromDB = async (params: any, options: any) => {
       })),
     });
   }
+  andConditions.push({
+    isDeleted: false,
+  });
 
   // Pagination and sorting
 
@@ -66,21 +69,26 @@ const getAllAdminFromDB = async (params: any, options: any) => {
 };
 
 // Get Single Admin From DB
-const getSingleAdminFromDB = async (id: string) => {
+const getSingleAdminFromDB = async (id: string): Promise<Admin | null> => {
   const result = await prisma.admin.findUnique({
     where: {
       id,
+      isDeleted: false,
     },
   });
   return result;
 };
 
 // Update Admin in DB
-const updateAdminInDB = async (id: string, data: Partial<Admin>) => {
+const updateAdminInDB = async (
+  id: string,
+  data: Partial<Admin>
+): Promise<Admin | null> => {
   // if not exist, throw error
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -95,7 +103,7 @@ const updateAdminInDB = async (id: string, data: Partial<Admin>) => {
 };
 
 // Delete Admin From DB
-const deleteAdminFromDB = async (id: string) => {
+const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
@@ -108,7 +116,7 @@ const deleteAdminFromDB = async (id: string) => {
       },
     });
 
-    const userDeletedData = await transactionClient.user.delete({
+    await transactionClient.user.delete({
       where: {
         email: adminDeletedData.email,
       },
@@ -121,10 +129,11 @@ const deleteAdminFromDB = async (id: string) => {
 };
 
 // Soft Delete Admin From DB
-const softDeleteAdminFromDB = async (id: string) => {
+const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -138,7 +147,7 @@ const softDeleteAdminFromDB = async (id: string) => {
       },
     });
 
-    const userSoftDeletedData = await transactionClient.user.update({
+    await transactionClient.user.update({
       where: {
         email: adminSoftDeletedData.email,
       },
