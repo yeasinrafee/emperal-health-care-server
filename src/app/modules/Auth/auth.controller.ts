@@ -1,19 +1,20 @@
 import { RequestHandler } from 'express';
-import { UserService } from './user.service';
 import catchAsync from '../../../shared/catchAsync';
+import { AuthService } from './auth.service';
 import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 
-const createAdmin: RequestHandler = catchAsync(async (req, res) => {
-  const result = await UserService.createAdmin(req.body);
+const loginUser: RequestHandler = catchAsync(async (req, res) => {
+  const result = await AuthService.loginUser(req.body);
+
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
-    message: 'Admin created successfully',
+    message: 'Logged in successfully',
     data: result,
   });
 });
 
-export const UserController = {
-  createAdmin,
+export const AuthController = {
+  loginUser,
 };

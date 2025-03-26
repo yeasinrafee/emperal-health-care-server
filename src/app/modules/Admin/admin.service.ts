@@ -7,7 +7,7 @@ import { TPaginationOption } from '../../types/pagination';
 
 // Get All Admins from DB
 const getAllAdminFromDB = async (
-  params: TAdminFilterRequest,
+  params: Partial<TAdminFilterRequest>,
   options: TPaginationOption
 ) => {
   const { searchTerm, ...filterData } = params;
