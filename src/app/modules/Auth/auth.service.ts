@@ -2,6 +2,8 @@ import { UserStatus } from '@prisma/client';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import * as bcrypt from 'bcrypt';
+import config from '../../../config';
+import { Secret } from 'jsonwebtoken';
 
 // 1. Login the user
 const loginUser = async (payload: { email: string; password: string }) => {
@@ -29,8 +31,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
       email: userData.email,
       role: userData.role,
     },
-    'abcdefg',
-    '5m'
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
   );
 
   // generating refresh token
@@ -39,8 +41,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
       email: userData.email,
       role: userData.role,
     },
-    'abcdefg',
-    '30d'
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string
   );
 
   return {
@@ -53,7 +55,10 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, 'abcdefg');
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.jwt.refresh_token_secret as Secret
+    );
   } catch (err) {
     throw new Error('You are not authorized!');
   }
@@ -71,8 +76,8 @@ const refreshToken = async (token: string) => {
       email: userData.email,
       role: userData.role,
     },
-    'abcdefg',
-    '5m'
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
   );
   return {
     accessToken,
