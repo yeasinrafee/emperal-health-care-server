@@ -52,6 +52,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
   };
 };
 
+// 2. Getting access token using refresh Token
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
