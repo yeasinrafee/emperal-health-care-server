@@ -5,7 +5,7 @@ import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 
 const createAdmin: RequestHandler = catchAsync(async (req, res) => {
-  const result = await UserService.createAdmin(req.body);
+  const result = await UserService.createAdmin(req);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
