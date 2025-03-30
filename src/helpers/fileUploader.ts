@@ -2,6 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import { TCloudinaryResponse, TFile } from '../app/types/file';
 
 // Configuration
 cloudinary.config({
@@ -21,15 +22,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const uploadToCloudinary = async (file: any) => {
+const uploadToCloudinary = async (
+  file: TFile
+): Promise<TCloudinaryResponse | undefined> => {
   return new Promise((resolve, reject) => {
     // Upload an image
     cloudinary.uploader.upload(
       file.path,
-      {
-        public_id: file.originalname,
-      },
-      (error, result) => {
+      (error: Error, result: TCloudinaryResponse) => {
         fs.unlinkSync(file.path);
         if (error) {
           reject(error);
