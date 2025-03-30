@@ -1,11 +1,12 @@
-import { UserRole } from '@prisma/client';
+import { Admin, Doctor, Patient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import prisma from '../../../shared/prisma';
 import { fileUploader } from '../../../helpers/fileUploader';
 import { TFile } from '../../types/file';
+import { Request } from 'express';
 
-const createAdmin = async (req: any) => {
-  const file: TFile = req.file;
+const createAdmin = async (req: Request): Promise<Admin> => {
+  const file = req.file as TFile;
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
     req.body.admin.profilePhoto = uploadToCloudinary?.secure_url;
@@ -33,8 +34,8 @@ const createAdmin = async (req: any) => {
   return result;
 };
 
-const createDoctor = async (req: any) => {
-  const file: TFile = req.file;
+const createDoctor = async (req: Request): Promise<Doctor> => {
+  const file = req.file as TFile;
 
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
@@ -64,8 +65,8 @@ const createDoctor = async (req: any) => {
   return result;
 };
 
-const createPatient = async (req: any) => {
-  const file: TFile = req.file;
+const createPatient = async (req: Request): Promise<Patient> => {
+  const file = req.file as TFile;
 
   if (file) {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
