@@ -18,6 +18,7 @@ model User {
   updatedAt          DateTime   @updatedAt
   admin              Admin?
   doctor             Doctor?
+  patient            Patient?
 
   @@map("users")
 }
@@ -57,6 +58,21 @@ model Doctor {
   user                User     @relation(fields: [email], references: [email])
 
   @@map("doctor")
+}
+
+model Patient {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  profilePhoto  String?
+  contactNumber String
+  address       String
+  isDeleted     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  user          User     @relation(fields: [email], references: [email])
+
+  @@map("patient")
 }
 
 enum UserRole {

@@ -53,7 +53,26 @@ const createDoctorZodValidation = z.object({
   }),
 });
 
+const createPatientZodValidation = z.object({
+  password: z.string({
+    required_error: 'Password is required',
+  }),
+  patient: z.object({
+    name: z.string({
+      required_error: 'Name is required',
+    }),
+    email: z.string({
+      required_error: 'Email is required',
+    }),
+    contactNumber: z.string({
+      required_error: 'Contact Number is required',
+    }),
+    address: z.string().optional(),
+  }),
+});
+
 export const userValidation = {
   createAdminZodValidation,
   createDoctorZodValidation,
+  createPatientZodValidation,
 };

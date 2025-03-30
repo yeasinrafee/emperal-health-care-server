@@ -7,6 +7,7 @@ import { userValidation } from './user.validation';
 
 const router = express.Router();
 
+// Creating Admin
 router.post(
   '/create-admin',
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
@@ -19,6 +20,7 @@ router.post(
   }
 );
 
+// Creating Doctor
 router.post(
   '/create-doctor',
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
@@ -28,6 +30,19 @@ router.post(
       JSON.parse(req.body.data)
     );
     return UserController.createDoctor(req, res, next);
+  }
+);
+
+// Creating Patient
+router.post(
+  '/create-patient',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  fileUploader.upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = userValidation.createPatientZodValidation.parse(
+      JSON.parse(req.body.data)
+    );
+    return UserController.createPatient(req, res, next);
   }
 );
 
