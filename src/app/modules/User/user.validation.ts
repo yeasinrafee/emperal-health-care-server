@@ -71,8 +71,15 @@ const createPatientZodValidation = z.object({
   }),
 });
 
+const updateUserRoleZodValidation = z.object({
+  body: z.object({
+    status: z.enum(['ACTIVE', 'BLOCKED', 'DELETED']),
+  }),
+});
+
 export const userValidation = {
   createAdminZodValidation,
   createDoctorZodValidation,
   createPatientZodValidation,
+  updateUserRoleZodValidation,
 };
