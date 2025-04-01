@@ -51,9 +51,23 @@ const getAllUsersFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// Change User Status
+const changeProfileStatus: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+  const result = await UserService.changeProfileStatus(id, data);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Users profile status changed successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   createAdmin,
   createDoctor,
   createPatient,
   getAllUsersFromDB,
+  changeProfileStatus,
 };
