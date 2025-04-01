@@ -107,8 +107,7 @@ const getAllUsersFromDB = async (params: any, options: TPaginationOption) => {
     paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.UserWhereInput[] = [];
-  const whereConditions: Prisma.UserWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+  const whereConditions: Prisma.UserWhereInput = { AND: andConditions };
 
   // Search Data
   if (params.searchTerm) {
@@ -146,6 +145,18 @@ const getAllUsersFromDB = async (params: any, options: TPaginationOption) => {
         : {
             createdAt: 'desc',
           },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      needPasswordChange: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      admin: true,
+      patient: true,
+      doctor: true,
+    },
   });
 
   const total = await prisma.user.count({
