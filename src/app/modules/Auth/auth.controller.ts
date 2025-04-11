@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 
+// 1. Login User
 const loginUser: RequestHandler = catchAsync(async (req, res) => {
   const result = await AuthService.loginUser(req.body);
 
@@ -25,6 +26,7 @@ const loginUser: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 2. Getting access token using refresh token
 const refreshToken: RequestHandler = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   const result = await AuthService.refreshToken(refreshToken);

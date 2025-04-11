@@ -14,8 +14,8 @@ app.use(cookieParser());
 
 app.use('/api/v1', router);
 
-app.use(globalErrorHandler);
 app.use(notFoundErrorHandler);
+app.use(globalErrorHandler);
 
 app.get('/', (req: Request, res: Response) => {
   res.send({

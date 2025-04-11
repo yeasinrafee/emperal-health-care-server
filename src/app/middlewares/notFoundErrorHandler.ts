@@ -4,7 +4,7 @@ import status from 'http-status';
 const notFoundErrorHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   res.status(status.NOT_FOUND).json({
     success: false,

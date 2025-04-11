@@ -89,6 +89,7 @@ const refreshToken = async (token: string) => {
   };
 };
 
+// 3. Change password
 const changePassword = async (user: any, payload: any) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
@@ -125,6 +126,7 @@ const changePassword = async (user: any, payload: any) => {
   };
 };
 
+// 4. Forgot password
 const forgotPassword = async (payload: { email: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
@@ -162,6 +164,7 @@ const forgotPassword = async (payload: { email: string }) => {
   console.log(resetPassLink);
 };
 
+// 5. Reset password
 const resetPassword = async (
   token: string,
   payload: {
