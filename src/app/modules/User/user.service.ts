@@ -257,6 +257,13 @@ const updateMyProfile = async (user, payload) => {
     },
   });
 
+  const file = payload.file as TFile;
+
+  if (file) {
+    const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
+    payload.body.profilePhoto = uploadToCloudinary?.secure_url;
+  }
+
   let profileInfo;
 
   if (userInfo.role === UserRole.SUPER_ADMIN) {
@@ -264,28 +271,28 @@ const updateMyProfile = async (user, payload) => {
       where: {
         email: userInfo.email,
       },
-      data: payload,
+      data: payload.body,
     });
   } else if (userInfo.role === UserRole.ADMIN) {
     profileInfo = await prisma.admin.update({
       where: {
         email: userInfo.email,
       },
-      data: payload,
+      data: payload.body,
     });
   } else if (userInfo.role === UserRole.DOCTOR) {
     profileInfo = await prisma.doctor.update({
       where: {
         email: userInfo.email,
       },
-      data: payload,
+      data: payload.body,
     });
   } else if (userInfo.role === UserRole.PATIENT) {
     profileInfo = await prisma.patient.update({
       where: {
         email: userInfo.email,
       },
-      data: payload,
+      data: payload.body,
     });
   }
 

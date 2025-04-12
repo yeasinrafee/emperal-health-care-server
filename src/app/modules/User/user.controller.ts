@@ -82,7 +82,7 @@ const getMyProfile: RequestHandler = catchAsync(async (req, res) => {
 // 7. Update My Profile
 const updateMyProfile: RequestHandler = catchAsync(async (req, res) => {
   const user = req.user;
-  const result = await UserService.updateMyProfile(user, req.body);
+  const result = await UserService.updateMyProfile(user, req);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
