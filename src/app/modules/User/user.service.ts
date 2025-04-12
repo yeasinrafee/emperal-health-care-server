@@ -8,6 +8,7 @@ import { TPaginationOption } from '../../types/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { userSearchableFields } from './user.constant';
 
+// 1. Creating Admin
 const createAdmin = async (req: Request): Promise<Admin> => {
   const file = req.file as TFile;
   if (file) {
@@ -37,6 +38,7 @@ const createAdmin = async (req: Request): Promise<Admin> => {
   return result;
 };
 
+// 2. Creating Doctor
 const createDoctor = async (req: Request): Promise<Doctor> => {
   const file = req.file as TFile;
 
@@ -68,6 +70,7 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
   return result;
 };
 
+// 3. Creating Patient
 const createPatient = async (req: Request): Promise<Patient> => {
   const file = req.file as TFile;
 
@@ -99,7 +102,7 @@ const createPatient = async (req: Request): Promise<Patient> => {
   return result;
 };
 
-// Get All Users from DB
+// 4. Get All Users from DB
 const getAllUsersFromDB = async (params: any, options: TPaginationOption) => {
   const { searchTerm, ...filterData } = params;
 
@@ -173,6 +176,7 @@ const getAllUsersFromDB = async (params: any, options: TPaginationOption) => {
   };
 };
 
+// 5. Change Profile status
 const changeProfileStatus = async (id: string, status: UserRole) => {
   await prisma.user.findUniqueOrThrow({
     where: {
@@ -190,10 +194,58 @@ const changeProfileStatus = async (id: string, status: UserRole) => {
   return updateUserStatus;
 };
 
+// 6. Get My profile
+const getMyProfile = async (user) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+    },
+    select: {
+      id: true,
+      email: true,
+      needPasswordChange: true,
+      role: true,
+      status: true,
+    },
+  });
+
+  let profileInfo;
+
+  if (userInfo.role === UserRole.SUPER_ADMIN) {
+    profileInfo = await prisma.admin.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === UserRole.ADMIN) {
+    profileInfo = await prisma.admin.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === UserRole.DOCTOR) {
+    profileInfo = await prisma.doctor.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === UserRole.PATIENT) {
+    profileInfo = await prisma.patient.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  }
+
+  // return { ...userInfo, ...profileInfo };
+  return { ...userInfo, ...profileInfo };
+};
+
 export const UserService = {
   createAdmin,
   createDoctor,
   createPatient,
   getAllUsersFromDB,
   changeProfileStatus,
+  getMyProfile,
 };

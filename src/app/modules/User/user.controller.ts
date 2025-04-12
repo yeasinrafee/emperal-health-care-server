@@ -6,6 +6,7 @@ import status from 'http-status';
 import pick from '../../../shared/pick';
 import { userFilterableFields } from './user.constant';
 
+// 1. Creating Admin
 const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   const result = await UserService.createAdmin(req);
   sendResponse(res, {
@@ -16,6 +17,7 @@ const createAdmin: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 2. Creating Doctor
 const createDoctor: RequestHandler = catchAsync(async (req, res) => {
   const result = await UserService.createDoctor(req);
   sendResponse(res, {
@@ -26,6 +28,7 @@ const createDoctor: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 3. Creating Patient
 const createPatient: RequestHandler = catchAsync(async (req, res) => {
   const result = await UserService.createPatient(req);
   sendResponse(res, {
@@ -36,7 +39,7 @@ const createPatient: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Get All Users From DB
+// 4. Get All Users From DB
 const getAllUsersFromDB: RequestHandler = catchAsync(async (req, res) => {
   const filters = pick(req.query, userFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
@@ -51,7 +54,7 @@ const getAllUsersFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Change User Status
+// 5. Change User Status
 const changeProfileStatus: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
@@ -64,10 +67,23 @@ const changeProfileStatus: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 6. Get My Profile
+const getMyProfile: RequestHandler = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await UserService.getMyProfile(user);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'My profile retrieve successfully!',
+    data: result,
+  });
+});
+
 export const UserController = {
   createAdmin,
   createDoctor,
   createPatient,
   getAllUsersFromDB,
   changeProfileStatus,
+  getMyProfile,
 };
