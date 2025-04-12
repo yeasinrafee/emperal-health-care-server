@@ -1,10 +1,11 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
 import { UserService } from './user.service';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 import pick from '../../../shared/pick';
 import { userFilterableFields } from './user.constant';
+import { TAuthUser } from '../../types/common';
 
 // 1. Creating Admin
 const createAdmin: RequestHandler = catchAsync(async (req, res) => {
@@ -68,28 +69,32 @@ const changeProfileStatus: RequestHandler = catchAsync(async (req, res) => {
 });
 
 // 6. Get My Profile
-const getMyProfile: RequestHandler = catchAsync(async (req, res) => {
-  const user = req.user;
-  const result = await UserService.getMyProfile(user);
-  sendResponse(res, {
-    statusCode: status.OK,
-    success: true,
-    message: 'My profile retrieve successfully!',
-    data: result,
-  });
-});
+const getMyProfile: RequestHandler = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res) => {
+    const user = req.user;
+    const result = await UserService.getMyProfile(user as TAuthUser);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: 'My profile retrieve successfully!',
+      data: result,
+    });
+  }
+);
 
 // 7. Update My Profile
-const updateMyProfile: RequestHandler = catchAsync(async (req, res) => {
-  const user = req.user;
-  const result = await UserService.updateMyProfile(user, req);
-  sendResponse(res, {
-    statusCode: status.OK,
-    success: true,
-    message: 'My profile updated successfully!',
-    data: result,
-  });
-});
+const updateMyProfile: RequestHandler = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res) => {
+    const user = req.user;
+    const result = await UserService.updateMyProfile(user as TAuthUser, req);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: 'My profile updated successfully!',
+      data: result,
+    });
+  }
+);
 
 export const UserController = {
   createAdmin,

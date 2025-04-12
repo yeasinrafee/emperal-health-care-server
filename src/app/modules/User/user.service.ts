@@ -14,6 +14,7 @@ import { Request } from 'express';
 import { TPaginationOption } from '../../types/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { userSearchableFields } from './user.constant';
+import { TAuthUser } from '../../types/common';
 
 // 1. Creating Admin
 const createAdmin = async (req: Request): Promise<Admin> => {
@@ -202,10 +203,10 @@ const changeProfileStatus = async (id: string, status: UserRole) => {
 };
 
 // 6. Get My profile
-const getMyProfile = async (user) => {
+const getMyProfile = async (user: TAuthUser) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: user?.email,
       status: UserStatus.ACTIVE,
     },
     select: {
@@ -249,10 +250,10 @@ const getMyProfile = async (user) => {
 };
 
 // 7. Update my Profile
-const updateMyProfile = async (user, payload) => {
+const updateMyProfile = async (user: TAuthUser, payload: Request) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: user?.email,
       status: UserStatus.ACTIVE,
     },
   });
