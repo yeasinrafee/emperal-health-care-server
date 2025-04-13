@@ -28,7 +28,21 @@ const getAllSpecialtiesFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 2. Delete Specialties
+const deleteSpecialtiesFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await SpecialtiesService.deleteSpecialtiesFromDB(id);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Specialties deleted successfully',
+    data: result,
+  });
+});
+
 export const SpecialtiesController = {
   createSpecialtiesIntoDB,
   getAllSpecialtiesFromDB,
+  deleteSpecialtiesFromDB,
 };

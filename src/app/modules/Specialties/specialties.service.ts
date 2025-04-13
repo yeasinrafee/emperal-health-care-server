@@ -24,7 +24,24 @@ const getAllSpecialtiesFromDB = async () => {
   return result;
 };
 
+// 3. Delete Specialties
+const deleteSpecialtiesFromDB = async (id: string) => {
+  await prisma.specialties.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const result = await prisma.specialties.delete({
+    where: {
+      id,
+    },
+  });
+  return result;
+};
+
 export const SpecialtiesService = {
   createSpecialtiesIntoDB,
   getAllSpecialtiesFromDB,
+  deleteSpecialtiesFromDB,
 };
