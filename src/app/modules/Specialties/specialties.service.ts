@@ -3,7 +3,7 @@ import { TFile } from '../../types/file';
 import { fileUploader } from '../../../helpers/fileUploader';
 import prisma from '../../../shared/prisma';
 
-// Create Specialties
+// 1. Create Specialties
 const createSpecialtiesIntoDB = async (req: Request) => {
   const file = req.file as TFile;
   if (file) {
@@ -18,6 +18,13 @@ const createSpecialtiesIntoDB = async (req: Request) => {
   return result;
 };
 
+// 2. Get All Specialties
+const getAllSpecialtiesFromDB = async () => {
+  const result = await prisma.specialties.findMany();
+  return result;
+};
+
 export const SpecialtiesService = {
   createSpecialtiesIntoDB,
+  getAllSpecialtiesFromDB,
 };

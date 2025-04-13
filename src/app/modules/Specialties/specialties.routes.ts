@@ -17,4 +17,6 @@ router.post(
   }
 );
 
+router.get('/', SpecialtiesController.getAllSpecialtiesFromDB);
+
 export const SpecialtiesRoutes = router;

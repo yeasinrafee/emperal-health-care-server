@@ -16,6 +16,19 @@ const createSpecialtiesIntoDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 2. Get All Specialties
+const getAllSpecialtiesFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const result = await SpecialtiesService.getAllSpecialtiesFromDB();
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Specialties are retrieved successfully',
+    data: result,
+  });
+});
+
 export const SpecialtiesController = {
   createSpecialtiesIntoDB,
+  getAllSpecialtiesFromDB,
 };
