@@ -6,7 +6,7 @@ import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
 
-// Get All Admins From DB
+// 1. Get All Admins From DB
 const getAllAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   const filters = pick(req.query, adminFilterableFields);
   const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
@@ -21,7 +21,7 @@ const getAllAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Get Single Admin From DB
+// 2. Get Single Admin From DB
 const getSingleAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await AdminService.getSingleAdminFromDB(id);
@@ -33,7 +33,7 @@ const getSingleAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Update Admin in DB
+// 3. Update Admin in DB
 const updateAdminInDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
@@ -46,7 +46,7 @@ const updateAdminInDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Delete Admin From DB
+// 4. Delete Admin From DB
 const deleteAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
 
@@ -59,7 +59,7 @@ const deleteAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-// Soft Delete Admin From DB
+// 5. Soft Delete Admin From DB
 const softDeleteAdminFromDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
 

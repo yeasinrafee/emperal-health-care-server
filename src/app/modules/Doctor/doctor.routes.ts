@@ -19,4 +19,10 @@ router.get(
 
 router.patch('/:id', DoctorController.updateDoctorIntoDB);
 
+router.delete(
+  '/:id',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  DoctorController.deleteDoctorFromDB
+);
+
 export const DoctorRouters = router;

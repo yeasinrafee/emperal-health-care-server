@@ -33,6 +33,7 @@ const getSingleDoctorFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 3. Update Doctor in DB
 const updateDoctorIntoDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
@@ -46,8 +47,22 @@ const updateDoctorIntoDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 4. Delete Doctor From DB
+const deleteDoctorFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await DoctorService.deleteDoctorFromDB(id);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Doctor deleted successfully!',
+    data: result,
+  });
+});
+
 export const DoctorController = {
   getAllDoctorsFromDB,
   getSingleDoctorFromDB,
   updateDoctorIntoDB,
+  deleteDoctorFromDB,
 };

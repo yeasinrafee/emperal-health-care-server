@@ -83,6 +83,7 @@ const getSingleDoctorFromDB = async (id: string) => {
   return result;
 };
 
+// 3. Update Doctor in DB
 const updateDoctorIntoDB = async (id: string, payload: any) => {
   await prisma.doctor.findUniqueOrThrow({
     where: {
@@ -100,8 +101,36 @@ const updateDoctorIntoDB = async (id: string, payload: any) => {
   return updatedDoctorData;
 };
 
+// 4. Delete Doctor From DB
+const deleteDoctorFromDB = async (id: string): Promise<Doctor | null> => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const doctorDeletedData = await transactionClient.doctor.delete({
+      where: {
+        id,
+      },
+    });
+
+    await transactionClient.user.delete({
+      where: {
+        email: doctorDeletedData.email,
+      },
+    });
+
+    return doctorDeletedData;
+  });
+
+  return result;
+};
+
 export const DoctorService = {
   getAllDoctorFromDB,
   getSingleDoctorFromDB,
   updateDoctorIntoDB,
+  deleteDoctorFromDB,
 };
