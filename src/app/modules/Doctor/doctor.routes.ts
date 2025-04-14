@@ -11,6 +11,12 @@ router.get(
   DoctorController.getAllDoctorsFromDB
 );
 
+router.get(
+  '/:id',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  DoctorController.getSingleDoctorFromDB
+);
+
 router.patch('/:id', DoctorController.updateDoctorIntoDB);
 
 export const DoctorRouters = router;

@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Doctor, Prisma } from '@prisma/client';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 import { TPaginationOption } from '../../types/pagination';
@@ -72,6 +72,17 @@ const getAllDoctorFromDB = async (
   };
 };
 
+// 2. Get Single Admin From DB
+const getSingleDoctorFromDB = async (id: string) => {
+  const result = await prisma.doctor.findUnique({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+  return result;
+};
+
 const updateDoctorIntoDB = async (id: string, payload: any) => {
   await prisma.doctor.findUniqueOrThrow({
     where: {
@@ -91,5 +102,6 @@ const updateDoctorIntoDB = async (id: string, payload: any) => {
 
 export const DoctorService = {
   getAllDoctorFromDB,
+  getSingleDoctorFromDB,
   updateDoctorIntoDB,
 };
