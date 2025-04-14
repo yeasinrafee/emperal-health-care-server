@@ -4,8 +4,9 @@ export type TDoctorFilterRequest = {
   contactNumber: string | undefined;
   searchTerm: string | undefined;
   registrationNumber: string | undefined;
-  experience: number | undefined;
-  appointmentFee: number | undefined;
+  // experience: number | undefined;
+  // appointmentFee: number | undefined;
   qualification: string | undefined;
   designation: string | undefined;
+  specialties: string | undefined;
 };
