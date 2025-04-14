@@ -10,3 +10,8 @@ export type TDoctorFilterRequest = {
   designation: string | undefined;
   specialties: string | undefined;
 };
+
+export type TSpecialtyUpdate = {
+  isDeleted: boolean;
+  specialtiesId: string;
+};

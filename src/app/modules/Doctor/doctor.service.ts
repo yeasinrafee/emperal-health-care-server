@@ -2,7 +2,7 @@ import { Doctor, Prisma, UserStatus } from '@prisma/client';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 import { TPaginationOption } from '../../types/pagination';
-import { TDoctorFilterRequest } from './doctor.types';
+import { TDoctorFilterRequest, TSpecialtyUpdate } from './doctor.types';
 import { doctorSearchableFields } from './doctor.constant';
 
 // 1. Get All Admins from DB
@@ -129,7 +129,7 @@ const updateDoctorIntoDB = async (id: string, payload: any) => {
     if (specialties && specialties.length > 0) {
       // Delete Specialties
       const deleteSpecialtiesIds = specialties.filter(
-        (specialty) => specialty.isDeleted
+        (specialty: TSpecialtyUpdate) => specialty.isDeleted
       );
 
       for (const specialty of deleteSpecialtiesIds) {
@@ -143,7 +143,7 @@ const updateDoctorIntoDB = async (id: string, payload: any) => {
 
       // Create Specialties
       const createSpecialtiesIds = specialties.filter(
-        (specialty) => !specialty.isDeleted
+        (specialty: TSpecialtyUpdate) => !specialty.isDeleted
       );
 
       for (const specialty of createSpecialtiesIds) {
