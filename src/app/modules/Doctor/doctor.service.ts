@@ -57,6 +57,13 @@ const getAllDoctorFromDB = async (
         : {
             createdAt: 'desc',
           },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.doctor.count({
@@ -85,20 +92,70 @@ const getSingleDoctorFromDB = async (id: string) => {
 
 // 3. Update Doctor in DB
 const updateDoctorIntoDB = async (id: string, payload: any) => {
-  await prisma.doctor.findUniqueOrThrow({
+  const { specialties, ...doctorData } = payload;
+
+  const doctorInfo = await prisma.doctor.findUniqueOrThrow({
     where: {
       id,
     },
   });
 
-  const updatedDoctorData = await prisma.doctor.update({
-    where: {
-      id,
-    },
-    data: payload,
+  await prisma.$transaction(async (transactionClient) => {
+    await transactionClient.doctor.update({
+      where: {
+        id,
+      },
+      data: doctorData,
+      include: {
+        doctorSpecialties: true,
+      },
+    });
+
+    if (specialties && specialties.length > 0) {
+      // Delete Specialties
+      const deleteSpecialtiesIds = specialties.filter(
+        (specialty) => specialty.isDeleted
+      );
+
+      for (const specialty of deleteSpecialtiesIds) {
+        await transactionClient.doctorSpecialties.deleteMany({
+          where: {
+            doctorId: doctorInfo.id,
+            specialtiesId: specialty.specialtiesId,
+          },
+        });
+      }
+
+      // Create Specialties
+      const createSpecialtiesIds = specialties.filter(
+        (specialty) => !specialty.isDeleted
+      );
+
+      for (const specialty of createSpecialtiesIds) {
+        await transactionClient.doctorSpecialties.create({
+          data: {
+            doctorId: doctorInfo.id,
+            specialtiesId: specialty.specialtiesId,
+          },
+        });
+      }
+    }
   });
 
-  return updatedDoctorData;
+  const result = await prisma.doctor.findUnique({
+    where: {
+      id: doctorInfo.id,
+    },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
+  });
+
+  return result;
 };
 
 // 4. Delete Doctor From DB
