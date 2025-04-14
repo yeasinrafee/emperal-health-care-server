@@ -60,9 +60,23 @@ const deleteDoctorFromDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 5. Soft Delete Admin From DB
+const softDeleteDoctorFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await DoctorService.softDeleteDoctorFromDB(id);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Doctor deleted successfully!',
+    data: result,
+  });
+});
+
 export const DoctorController = {
   getAllDoctorsFromDB,
   getSingleDoctorFromDB,
   updateDoctorIntoDB,
   deleteDoctorFromDB,
+  softDeleteDoctorFromDB,
 };

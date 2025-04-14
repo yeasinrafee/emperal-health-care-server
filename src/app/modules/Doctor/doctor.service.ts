@@ -1,4 +1,4 @@
-import { Doctor, Prisma } from '@prisma/client';
+import { Doctor, Prisma, UserStatus } from '@prisma/client';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 import { TPaginationOption } from '../../types/pagination';
@@ -128,9 +128,44 @@ const deleteDoctorFromDB = async (id: string): Promise<Doctor | null> => {
   return result;
 };
 
+// 5. Soft Delete Doctor From DB
+const softDeleteDoctorFromDB = async (id: string): Promise<Doctor | null> => {
+  await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const doctorSoftDeletedData = await transactionClient.doctor.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    await transactionClient.user.update({
+      where: {
+        email: doctorSoftDeletedData.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return doctorSoftDeletedData;
+  });
+
+  return result;
+};
+
 export const DoctorService = {
   getAllDoctorFromDB,
   getSingleDoctorFromDB,
   updateDoctorIntoDB,
   deleteDoctorFromDB,
+  softDeleteDoctorFromDB,
 };
