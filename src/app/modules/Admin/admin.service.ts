@@ -5,7 +5,7 @@ import prisma from '../../../shared/prisma';
 import { TAdminFilterRequest } from './admin.types';
 import { TPaginationOption } from '../../types/pagination';
 
-// Get All Admins from DB
+// 1. Get All Admins from DB
 const getAllAdminFromDB = async (
   params: Partial<TAdminFilterRequest>,
   options: TPaginationOption
@@ -72,7 +72,7 @@ const getAllAdminFromDB = async (
   };
 };
 
-// Get Single Admin From DB
+// 2. Get Single Admin From DB
 const getSingleAdminFromDB = async (id: string): Promise<Admin | null> => {
   const result = await prisma.admin.findUnique({
     where: {
@@ -83,7 +83,7 @@ const getSingleAdminFromDB = async (id: string): Promise<Admin | null> => {
   return result;
 };
 
-// Update Admin in DB
+// 3. Update Admin in DB
 const updateAdminInDB = async (
   id: string,
   data: Partial<Admin>
@@ -106,7 +106,7 @@ const updateAdminInDB = async (
   return result;
 };
 
-// Delete Admin From DB
+// 4. Delete Admin From DB
 const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
@@ -132,7 +132,7 @@ const deleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   return result;
 };
 
-// Soft Delete Admin From DB
+// 5. Soft Delete Admin From DB
 const softDeleteAdminFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {
