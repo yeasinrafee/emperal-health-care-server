@@ -1,7 +1,7 @@
 import { Patient, Prisma, UserStatus } from '@prisma/client';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { TPaginationOption } from '../../types/pagination';
-import { TPatientFilterRequest } from './patient.types';
+import { TPatientFilterRequest, TUpdatePatientResponse } from './patient.types';
 import { patientSearchableFields } from './patient.constant';
 import prisma from '../../../shared/prisma';
 
@@ -96,7 +96,7 @@ const getSinglePatientFromDB = async (id: string): Promise<Patient | null> => {
 // 3. Update Patient in DB
 const updatePatientInDB = async (
   id: string,
-  data: Partial<Patient>
+  data: Partial<TUpdatePatientResponse>
 ): Promise<Patient | null> => {
   const { patientHealthData, medicalReport, ...patientData } = data;
   //   if not exist, throw error
