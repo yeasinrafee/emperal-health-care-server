@@ -1,9 +1,9 @@
+import { TAuthUser } from './../../types/common';
 import status from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { Request, RequestHandler } from 'express';
 import { DoctorScheduleService } from './doctorSchedule.service';
-import { TAuthUser } from '../../types/common';
 import pick from '../../../shared/pick';
 
 // 1. Create Doctor Schedule
@@ -46,7 +46,27 @@ const getMyScheduleFromDB: RequestHandler = catchAsync(
   }
 );
 
+// 2. Delete my Schedule
+const deleteMyScheduleFromDB: RequestHandler = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res) => {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await DoctorScheduleService.deleteMySchedule(
+      user as TAuthUser,
+      id
+    );
+
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: 'My schedule is deleted successfully',
+      data: result,
+    });
+  }
+);
+
 export const DoctorScheduleController = {
   createDoctorScheduleIntoDB,
   getMyScheduleFromDB,
+  deleteMyScheduleFromDB,
 };
