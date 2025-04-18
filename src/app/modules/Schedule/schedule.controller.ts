@@ -16,6 +16,19 @@ const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 2. Get All Schedule
+const getAllScheduleFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const result = await ScheduleService.getAllSchedulesFromDB();
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Schedules are retrieved successfully',
+    data: result,
+  });
+});
+
 export const ScheduleController = {
   createScheduleIntoDB,
+  getAllScheduleFromDB,
 };

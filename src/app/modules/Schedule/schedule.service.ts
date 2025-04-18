@@ -3,6 +3,7 @@ import prisma from '../../../shared/prisma';
 import { Schedule } from '@prisma/client';
 import { TSchedule } from './schedule.types';
 
+// 1. Create Schedule
 const createScheduleIntoDB = async (
   payload: TSchedule
 ): Promise<Schedule[]> => {
@@ -65,6 +66,10 @@ const createScheduleIntoDB = async (
   return schedules;
 };
 
+// 2. Get All Schedules
+const getAllSchedulesFromDB = () => {};
+
 export const ScheduleService = {
   createScheduleIntoDB,
+  getAllSchedulesFromDB,
 };
