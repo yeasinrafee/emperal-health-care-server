@@ -24,7 +24,25 @@ const createDoctorScheduleIntoDB: RequestHandler = catchAsync(
   }
 );
 
-// 2. Get My Schedules
+// 2. Get All Schedules
+const getAllScheduleFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const filters = pick(req.query, ['startDate', 'endDate']);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+
+  const result = await DoctorScheduleService.getAllSchedulesFromDB(
+    filters,
+    options
+  );
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'All schedules are retrieved successfully',
+    data: result,
+  });
+});
+
+// 3. Get My Schedules
 const getMyScheduleFromDB: RequestHandler = catchAsync(
   async (req: Request & { user?: TAuthUser }, res) => {
     const filters = pick(req.query, ['startDate', 'endDate', 'isBooked']);
@@ -46,7 +64,7 @@ const getMyScheduleFromDB: RequestHandler = catchAsync(
   }
 );
 
-// 2. Delete my Schedule
+// 4. Delete my Schedule
 const deleteMyScheduleFromDB: RequestHandler = catchAsync(
   async (req: Request & { user?: TAuthUser }, res) => {
     const { id } = req.params;
@@ -67,6 +85,7 @@ const deleteMyScheduleFromDB: RequestHandler = catchAsync(
 
 export const DoctorScheduleController = {
   createDoctorScheduleIntoDB,
+  getAllScheduleFromDB,
   getMyScheduleFromDB,
   deleteMyScheduleFromDB,
 };

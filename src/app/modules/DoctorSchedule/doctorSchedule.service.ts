@@ -31,7 +31,76 @@ const createDoctorScheduleIntoDB = async (
   return result;
 };
 
-// 2. Get My Schedules
+// 2. Get All Schedules
+const getAllSchedulesFromDB = async (
+  params: Partial<any>,
+  options: TPaginationOption
+) => {
+  const { startDate, endDate, ...filterData } = params;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+
+  const andConditions: Prisma.ScheduleWhereInput[] = [];
+  const whereConditions: Prisma.ScheduleWhereInput = {
+    AND: andConditions,
+  };
+
+  if (startDate && endDate) {
+    andConditions.push({
+      AND: [
+        {
+          startDateTime: {
+            gte: startDate,
+          },
+        },
+        {
+          endDateTime: {
+            lte: endDate,
+          },
+        },
+      ],
+    });
+  }
+
+  // Filter data
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  // Pagination and sorting
+  const result = await prisma.schedule.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {},
+  });
+
+  const total = await prisma.schedule.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+// 3. Get My Schedules
 const getMySchedulesFromDB = async (
   params: Partial<any>,
   options: TPaginationOption,
@@ -90,9 +159,18 @@ const getMySchedulesFromDB = async (
     });
   }
 
+  const doctorData = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
   // Pagination and sorting
   const result = await prisma.doctorSchedules.findMany({
-    where: whereConditions,
+    where: {
+      ...whereConditions,
+      doctorId: doctorData.id,
+    },
     skip,
     take: limit,
     orderBy:
@@ -104,7 +182,10 @@ const getMySchedulesFromDB = async (
   });
 
   const total = await prisma.doctorSchedules.count({
-    where: whereConditions,
+    where: {
+      ...whereConditions,
+      doctorId: doctorData.id,
+    },
   });
 
   return {
@@ -117,7 +198,7 @@ const getMySchedulesFromDB = async (
   };
 };
 
-// 3. Delete my Schedule
+// 4. Delete my Schedule
 const deleteMySchedule = async (user: TAuthUser, scheduleId: string) => {
   const doctorData = await prisma.doctor.findUniqueOrThrow({
     where: {
@@ -155,6 +236,7 @@ const deleteMySchedule = async (user: TAuthUser, scheduleId: string) => {
 
 export const DoctorScheduleService = {
   createDoctorScheduleIntoDB,
+  getAllSchedulesFromDB,
   getMySchedulesFromDB,
   deleteMySchedule,
 };
