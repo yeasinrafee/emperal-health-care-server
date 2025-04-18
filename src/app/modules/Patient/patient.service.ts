@@ -58,6 +58,10 @@ const getAllPatientFromDB = async (
         : {
             createdAt: 'desc',
           },
+    include: {
+      patientHealthData: true,
+      medicalReport: true,
+    },
   });
 
   const total = await prisma.patient.count({
@@ -81,6 +85,10 @@ const getSinglePatientFromDB = async (id: string): Promise<Patient | null> => {
       id,
       isDeleted: false,
     },
+    include: {
+      patientHealthData: true,
+      medicalReport: true,
+    },
   });
   return result;
 };
@@ -103,6 +111,10 @@ const updatePatientInDB = async (
       id,
     },
     data,
+    include: {
+      patientHealthData: true,
+      medicalReport: true,
+    },
   });
 
   return result;
