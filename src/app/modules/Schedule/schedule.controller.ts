@@ -3,6 +3,7 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 import { ScheduleService } from './schedule.service';
+import pick from '../../../shared/pick';
 
 // 1. Create Schedule
 const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
@@ -18,7 +19,9 @@ const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
 
 // 2. Get All Schedule
 const getAllScheduleFromDB: RequestHandler = catchAsync(async (req, res) => {
-  const result = await ScheduleService.getAllSchedulesFromDB();
+  const filters = pick(req.query, ['startDateTime', 'endDateTime']);
+  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+  const result = await ScheduleService.getAllSchedulesFromDB(filters, options);
 
   sendResponse(res, {
     statusCode: status.OK,
