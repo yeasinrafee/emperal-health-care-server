@@ -109,7 +109,7 @@ const updatePatientInDB = async (
 
   const result = await prisma.$transaction(async (transactionClient) => {
     // updating patient data
-    const updatedPatient = await transactionClient.patient.update({
+    await transactionClient.patient.update({
       where: {
         id,
       },
@@ -122,7 +122,7 @@ const updatePatientInDB = async (
 
     // create or update patient health data
     if (patientHealthData) {
-      const healthData = await transactionClient.patientHealthData.upsert({
+      await transactionClient.patientHealthData.upsert({
         where: {
           patientId: patientInfo.id,
         },
@@ -135,7 +135,7 @@ const updatePatientInDB = async (
     }
 
     if (medicalReport) {
-      const report = await transactionClient.medicalReport.create({
+      await transactionClient.medicalReport.create({
         data: { ...medicalReport, patientId: patientInfo.id },
       });
     }
@@ -156,26 +156,36 @@ const updatePatientInDB = async (
 
 // 4. Delete Patient From DB
 const deletePatientFromDB = async (id: string): Promise<Patient | null> => {
-  await prisma.patient.findUniqueOrThrow({
-    where: {
-      id,
-    },
-  });
+  const result = await prisma.$transaction(async (tx) => {
+    // deleting medical report first
+    await tx.medicalReport.deleteMany({
+      where: {
+        patientId: id,
+      },
+    });
 
-  const result = await prisma.$transaction(async (transactionClient) => {
-    const patientDeletedData = await transactionClient.patient.delete({
+    // deleting patient health data
+    await tx.patientHealthData.delete({
+      where: {
+        patientId: id,
+      },
+    });
+
+    // deleting patient
+    const deletedPatient = await tx.patient.delete({
       where: {
         id,
       },
     });
 
-    await transactionClient.user.delete({
+    // deleting user
+    await tx.user.delete({
       where: {
-        email: patientDeletedData.email,
+        email: deletedPatient.email,
       },
     });
 
-    return patientDeletedData;
+    return deletedPatient;
   });
 
   return result;
