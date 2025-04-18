@@ -40,7 +40,7 @@ const getAllScheduleFromDB: RequestHandler = catchAsync(
   }
 );
 
-// 2. Get All Schedule
+// 3. Get Single Schedule
 const getSingleSchedule: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await ScheduleService.getSingleSchedule(id);
@@ -53,8 +53,22 @@ const getSingleSchedule: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 4. Delete Schedule
+const deleteScheduleFromDB: RequestHandler = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ScheduleService.deleteScheduleFromDB(id);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Schedules is deleted successfully',
+    data: result,
+  });
+});
+
 export const ScheduleController = {
   createScheduleIntoDB,
   getAllScheduleFromDB,
   getSingleSchedule,
+  deleteScheduleFromDB,
 };

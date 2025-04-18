@@ -167,6 +167,35 @@ const getSingleSchedule = async (id: string) => {
     where: {
       id,
     },
+    include: {
+      doctorSchedules: true,
+    },
+  });
+
+  return result;
+};
+
+// 4. Delete Schedule
+const deleteScheduleFromDB = async (id: string) => {
+  await prisma.schedule.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.doctorSchedules.deleteMany({
+      where: {
+        scheduleId: id,
+      },
+    });
+
+    const scheduleDeletedData = tx.schedule.delete({
+      where: {
+        id,
+      },
+    });
+    return scheduleDeletedData;
   });
 
   return result;
@@ -176,4 +205,5 @@ export const ScheduleService = {
   createScheduleIntoDB,
   getAllSchedulesFromDB,
   getSingleSchedule,
+  deleteScheduleFromDB,
 };
