@@ -108,8 +108,36 @@ const updatePatientInDB = async (
   return result;
 };
 
+// 4. Delete Patient From DB
+const deletePatientFromDB = async (id: string): Promise<Patient | null> => {
+  await prisma.patient.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const patientDeletedData = await transactionClient.patient.delete({
+      where: {
+        id,
+      },
+    });
+
+    await transactionClient.user.delete({
+      where: {
+        email: patientDeletedData.email,
+      },
+    });
+
+    return patientDeletedData;
+  });
+
+  return result;
+};
+
 export const PatientService = {
   getAllPatientFromDB,
   getSinglePatientFromDB,
   updatePatientInDB,
+  deletePatientFromDB,
 };
