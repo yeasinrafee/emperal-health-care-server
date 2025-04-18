@@ -1,9 +1,10 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 import { ScheduleService } from './schedule.service';
 import pick from '../../../shared/pick';
+import { TAuthUser } from '../../types/common';
 
 // 1. Create Schedule
 const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
@@ -18,18 +19,26 @@ const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
 });
 
 // 2. Get All Schedule
-const getAllScheduleFromDB: RequestHandler = catchAsync(async (req, res) => {
-  const filters = pick(req.query, ['startDateTime', 'endDateTime']);
-  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-  const result = await ScheduleService.getAllSchedulesFromDB(filters, options);
+const getAllScheduleFromDB: RequestHandler = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res) => {
+    const filters = pick(req.query, ['startDate', 'endDate']);
+    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
 
-  sendResponse(res, {
-    statusCode: status.OK,
-    success: true,
-    message: 'Schedules are retrieved successfully',
-    data: result,
-  });
-});
+    const user = req.user;
+    const result = await ScheduleService.getAllSchedulesFromDB(
+      filters,
+      options,
+      user as TAuthUser
+    );
+
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: 'Schedules are retrieved successfully',
+      data: result,
+    });
+  }
+);
 
 export const ScheduleController = {
   createScheduleIntoDB,
