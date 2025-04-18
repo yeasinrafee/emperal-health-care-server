@@ -6,7 +6,7 @@ import { ScheduleService } from './schedule.service';
 
 // 1. Create Schedule
 const createScheduleIntoDB: RequestHandler = catchAsync(async (req, res) => {
-  const result = await ScheduleService.createScheduleIntoDB(req);
+  const result = await ScheduleService.createScheduleIntoDB(req.body);
 
   sendResponse(res, {
     statusCode: status.OK,
