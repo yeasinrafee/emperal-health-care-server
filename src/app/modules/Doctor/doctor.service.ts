@@ -71,7 +71,7 @@ const getAllDoctorFromDB = async (
             [options.sortBy]: options.sortOrder,
           }
         : {
-            createdAt: 'desc',
+            averageRating: 'desc',
           },
     include: {
       doctorSpecialties: {
