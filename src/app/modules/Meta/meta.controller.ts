@@ -9,7 +9,7 @@ import status from 'http-status';
 const fetchDashboardMetaData: RequestHandler = catchAsync(
   async (req: Request & { user?: TAuthUser }, res) => {
     const user = req.user;
-    const result = await MetaService.fetchDashboardMetaData(user);
+    const result = await MetaService.fetchDashboardMetaData(user as TAuthUser);
     sendResponse(res, {
       statusCode: status.OK,
       success: true,
