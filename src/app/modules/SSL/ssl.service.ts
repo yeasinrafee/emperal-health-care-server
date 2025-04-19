@@ -2,8 +2,9 @@ import axios from 'axios';
 import config from '../../../config';
 import ApiError from '../../errors/ApiError';
 import status from 'http-status';
+import { TPaymentData } from './ssl.types';
 
-const initPayment = async (paymentData: any) => {
+const initPayment = async (paymentData: TPaymentData) => {
   try {
     const data = {
       store_id: config.ssl.storeId,
