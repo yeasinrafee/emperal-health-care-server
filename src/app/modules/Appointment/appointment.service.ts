@@ -54,6 +54,27 @@ const createAppointment = async (user: TAuthUser, payload: any) => {
       },
     });
 
+    const today = new Date();
+    const transactionId =
+      'Emperal-HealthCare' +
+      today.getFullYear() +
+      '-' +
+      today.getMonth() +
+      '-' +
+      today.getDate() +
+      '-' +
+      today.getHours() +
+      '-' +
+      today.getMinutes();
+
+    await tx.payment.create({
+      data: {
+        appointmentId: appointmentData.id,
+        amount: doctorData.appointmentFee,
+        transactionId,
+      },
+    });
+
     return appointmentData;
   });
 
