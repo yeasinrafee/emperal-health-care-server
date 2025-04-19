@@ -5,6 +5,8 @@ import { ReviewController } from './review.controller';
 
 const router = express.Router();
 
+router.get('/', ReviewController.getAllReviewsFromDB);
+
 router.post('/', auth(UserRole.PATIENT), ReviewController.createReviewIntoDB);
 
 export const ReviewRoutes = router;
