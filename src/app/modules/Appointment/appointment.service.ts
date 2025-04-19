@@ -84,7 +84,60 @@ const createAppointment = async (user: TAuthUser, payload: any) => {
   return result;
 };
 
-// 2. Get My Appointments
+// 2. Get All Appointments
+const getAllAppointment = async (filters: any, options: TPaginationOption) => {
+  const { ...filterData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+
+  const andConditions: Prisma.AppointmentWhereInput[] = [];
+  const whereConditions: Prisma.AppointmentWhereInput = { AND: andConditions };
+
+  // Filter data
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  // Pagination and sorting
+  const result = await prisma.appointment.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? {
+            [options.sortBy]: options.sortOrder,
+          }
+        : {
+            createdAt: 'desc',
+          },
+    include: {
+      doctor: true,
+      patient: true,
+      schedule: true,
+    },
+  });
+
+  const total = await prisma.appointment.count({
+    where: whereConditions,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+// 3. Get My Appointments
 const getMyAppointment = async (
   user: TAuthUser,
   filters: any,
@@ -161,5 +214,6 @@ const getMyAppointment = async (
 
 export const AppointmentService = {
   createAppointment,
+  getAllAppointment,
   getMyAppointment,
 };

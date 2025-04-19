@@ -24,7 +24,21 @@ const createAppointment: RequestHandler = catchAsync(
   }
 );
 
-// 2. Get My Appointment
+// 2. Get All Appointment
+const getAllAppointment: RequestHandler = catchAsync(async (req, res) => {
+  const filters = pick(req.query, ['status', 'paymentStatus']);
+  const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+  const result = await AppointmentService.getAllAppointment(filters, options);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Appointments are retrieved successfully',
+    data: result,
+  });
+});
+
+// 3. Get My Appointment
 const getMyAppointment: RequestHandler = catchAsync(
   async (req: Request & { user?: TAuthUser }, res) => {
     const user = req.user;
@@ -39,7 +53,7 @@ const getMyAppointment: RequestHandler = catchAsync(
     sendResponse(res, {
       statusCode: 200,
       success: true,
-      message: 'Appointments are retrieved successfully',
+      message: 'My appointments are retrieved successfully',
       data: result,
     });
   }
@@ -47,5 +61,6 @@ const getMyAppointment: RequestHandler = catchAsync(
 
 export const AppointmentController = {
   createAppointment,
+  getAllAppointment,
   getMyAppointment,
 };
