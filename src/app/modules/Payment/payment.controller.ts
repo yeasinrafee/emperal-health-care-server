@@ -17,6 +17,19 @@ const initPayment: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+// 1. Validate Payment
+const validatePayment: RequestHandler = catchAsync(async (req, res) => {
+  const result = await PaymentService.validatePayment(req.query);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: 'Payment validate successfully!',
+    data: result,
+  });
+});
+
 export const PaymentController = {
   initPayment,
+  validatePayment,
 };
