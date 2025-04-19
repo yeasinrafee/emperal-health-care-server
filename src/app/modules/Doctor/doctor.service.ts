@@ -11,7 +11,6 @@ const getAllDoctorFromDB = async (
   options: TPaginationOption
 ) => {
   const { searchTerm, specialties, ...filterData } = params;
-  console.log(specialties);
 
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
@@ -56,9 +55,11 @@ const getAllDoctorFromDB = async (
       })),
     });
   }
+
   andConditions.push({
     isDeleted: false,
   });
+
   // Pagination and sorting
   const result = await prisma.doctor.findMany({
     where: whereConditions,
