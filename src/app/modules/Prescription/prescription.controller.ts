@@ -5,6 +5,7 @@ import sendResponse from '../../../shared/sendResponse';
 import status from 'http-status';
 import { TAuthUser } from '../../types/common';
 import pick from '../../../shared/pick';
+import { prescriptionFilterableFields } from './prescription.constant';
 
 // 1. Create Prescription
 const createPrescriptionIntoDB: RequestHandler = catchAsync(
@@ -45,7 +46,27 @@ const getMyPrescriptionsFromDB: RequestHandler = catchAsync(
   }
 );
 
+// 3. Get All Prescriptions
+const getAllPrescriptionsFromDB: RequestHandler = catchAsync(
+  async (req, res) => {
+    const filters = pick(req.query, prescriptionFilterableFields);
+    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+    const result = await PrescriptionService.getAllPrescriptionsFromDB(
+      filters,
+      options
+    );
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: 'Prescriptions are retrieved successfully',
+      meta: result.meta,
+      data: result.data,
+    });
+  }
+);
+
 export const PrescriptionController = {
   createPrescriptionIntoDB,
   getMyPrescriptionsFromDB,
+  getAllPrescriptionsFromDB,
 };
