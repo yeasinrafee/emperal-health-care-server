@@ -22,7 +22,28 @@ const fetchDashboardMetaData = async (user: TAuthUser) => {
   }
 };
 
-const getSuperAdminMetaData = async () => {};
+const getSuperAdminMetaData = async () => {
+  const appointmentCount = await prisma.appointment.count();
+  const patientCount = await prisma.patient.count();
+  const doctorCount = await prisma.doctor.count();
+  const adminCount = await prisma.admin.count();
+  const paymentCount = await prisma.payment.count();
+
+  const totalRevenue = await prisma.payment.aggregate({
+    _sum: {
+      amount: true,
+    },
+  });
+
+  return {
+    appointmentCount,
+    patientCount,
+    doctorCount,
+    adminCount,
+    paymentCount,
+    totalRevenue,
+  };
+};
 
 const getAdminMetaData = async () => {
   const appointmentCount = await prisma.appointment.count();
