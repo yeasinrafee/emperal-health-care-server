@@ -15,7 +15,7 @@ const fetchDashboardMetaData = async (user: TAuthUser) => {
       getDoctorMetaData(user as TAuthUser);
       break;
     case UserRole.PATIENT:
-      getPatientMetaData();
+      getPatientMetaData(user as TAuthUser);
       break;
     default:
       throw new Error('Invalid user role!');
@@ -92,7 +92,48 @@ const getDoctorMetaData = async (user: TAuthUser) => {
   );
 };
 
-const getPatientMetaData = async () => {};
+const getPatientMetaData = async (user: TAuthUser) => {
+  const patientData = await prisma.patient.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const appointmentCount = await prisma.appointment.count({
+    where: {
+      patientId: patientData.id,
+    },
+  });
+
+  const prescriptionCount = await prisma.appointment.count({
+    where: {
+      patientId: patientData.id,
+    },
+  });
+
+  const reviewCount = await prisma.review.count({
+    where: {
+      patientId: patientData.id,
+    },
+  });
+
+  const appointStatusDistribution = await prisma.appointment.groupBy({
+    by: ['status'],
+    _count: {
+      id: true,
+    },
+    where: {
+      patientId: patientData.id,
+    },
+  });
+
+  const formattedAppointmentStatusDistribution = appointStatusDistribution.map(
+    ({ status, _count }) => ({
+      status,
+      count: _count.id,
+    })
+  );
+};
 
 export const MetaService = {
   fetchDashboardMetaData,
