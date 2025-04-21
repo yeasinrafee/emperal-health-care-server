@@ -1,25 +1,28 @@
-import { UserRole } from '@prisma/client';
+import { PaymentStatus, UserRole } from '@prisma/client';
 import { TAuthUser } from '../../types/common';
 import prisma from '../../../shared/prisma';
 
 // 1. Fetch Dashboard Meta data
 const fetchDashboardMetaData = async (user: TAuthUser) => {
+  let metaData;
   switch (user?.role) {
     case UserRole.SUPER_ADMIN:
-      getSuperAdminMetaData();
+      metaData = getSuperAdminMetaData();
       break;
     case UserRole.ADMIN:
-      getAdminMetaData();
+      metaData = getAdminMetaData();
       break;
     case UserRole.DOCTOR:
-      getDoctorMetaData(user as TAuthUser);
+      metaData = getDoctorMetaData(user as TAuthUser);
       break;
     case UserRole.PATIENT:
-      getPatientMetaData(user as TAuthUser);
+      metaData = getPatientMetaData(user as TAuthUser);
       break;
     default:
       throw new Error('Invalid user role!');
   }
+
+  return metaData;
 };
 
 const getSuperAdminMetaData = async () => {
@@ -32,6 +35,9 @@ const getSuperAdminMetaData = async () => {
   const totalRevenue = await prisma.payment.aggregate({
     _sum: {
       amount: true,
+    },
+    where: {
+      status: PaymentStatus.PAID,
     },
   });
 
@@ -55,7 +61,18 @@ const getAdminMetaData = async () => {
     _sum: {
       amount: true,
     },
+    where: {
+      status: PaymentStatus.PAID,
+    },
   });
+
+  return {
+    appointmentCount,
+    patientCount,
+    doctorCount,
+    paymentCount,
+    totalRevenue,
+  };
 };
 
 const getDoctorMetaData = async (user: TAuthUser) => {
@@ -92,6 +109,7 @@ const getDoctorMetaData = async (user: TAuthUser) => {
       appointment: {
         doctorId: doctorData.id,
       },
+      status: PaymentStatus.PAID,
     },
   });
 
@@ -111,6 +129,14 @@ const getDoctorMetaData = async (user: TAuthUser) => {
       count: _count.id,
     })
   );
+
+  return {
+    appointmentCount,
+    reviewCount,
+    patientCount: patientCount.length,
+    totalRevenue,
+    formattedAppointmentStatusDistribution,
+  };
 };
 
 const getPatientMetaData = async (user: TAuthUser) => {
@@ -154,6 +180,13 @@ const getPatientMetaData = async (user: TAuthUser) => {
       count: _count.id,
     })
   );
+
+  return {
+    appointmentCount,
+    prescriptionCount,
+    reviewCount,
+    formattedAppointmentStatusDistribution,
+  };
 };
 
 export const MetaService = {
