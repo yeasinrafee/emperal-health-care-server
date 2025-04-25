@@ -41,6 +41,8 @@ const getSuperAdminMetaData = async () => {
     },
   });
 
+  const barChartData = await getBarChartData();
+
   return {
     appointmentCount,
     patientCount,
@@ -48,6 +50,7 @@ const getSuperAdminMetaData = async () => {
     adminCount,
     paymentCount,
     totalRevenue,
+    barChartData,
   };
 };
 
@@ -187,6 +190,19 @@ const getPatientMetaData = async (user: TAuthUser) => {
     reviewCount,
     formattedAppointmentStatusDistribution,
   };
+};
+
+const getBarChartData = async () => {
+  const appointmentCountByMonth: { month: Date; count: bigint }[] =
+    await prisma.$queryRaw`
+    SELECT DATE_TRUNC('month', "createdAt") AS month, 
+    CAST(COUNT(*) AS INTEGER) AS count
+    FROM "appointments"
+    GROUP BY month
+    ORDER BY month ASC
+  `;
+
+  return appointmentCountByMonth;
 };
 
 export const MetaService = {
