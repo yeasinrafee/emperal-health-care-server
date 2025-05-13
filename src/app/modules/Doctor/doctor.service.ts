@@ -102,6 +102,13 @@ const getSingleDoctorFromDB = async (id: string) => {
       id,
       isDeleted: false,
     },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
   });
   return result;
 };

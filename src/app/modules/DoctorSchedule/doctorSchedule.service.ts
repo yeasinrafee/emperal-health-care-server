@@ -37,8 +37,7 @@ const getAllSchedulesFromDB = async (
   options: TPaginationOption
 ) => {
   const { startDate, endDate, ...filterData } = params;
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(options);
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.ScheduleWhereInput[] = [];
   const whereConditions: Prisma.ScheduleWhereInput = {
@@ -74,7 +73,7 @@ const getAllSchedulesFromDB = async (
   }
 
   // Pagination and sorting
-  const result = await prisma.schedule.findMany({
+  const result = await prisma.doctorSchedules.findMany({
     where: whereConditions,
     skip,
     take: limit,
@@ -84,6 +83,10 @@ const getAllSchedulesFromDB = async (
             [options.sortBy]: options.sortOrder,
           }
         : {},
+    include: {
+      doctor: true,
+      schedule: true,
+    },
   });
 
   const total = await prisma.schedule.count({
@@ -107,8 +110,7 @@ const getMySchedulesFromDB = async (
   user: TAuthUser
 ) => {
   const { startDate, endDate, ...filterData } = params;
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(options);
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.DoctorSchedulesWhereInput[] = [];
   const whereConditions: Prisma.DoctorSchedulesWhereInput = {

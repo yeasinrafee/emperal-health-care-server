@@ -70,6 +70,8 @@ const resetPassword: RequestHandler = catchAsync(async (req, res) => {
   const body = req.body;
   await AuthService.resetPassword(token, body);
 
+  console.log(token);
+
   sendResponse(res, {
     statusCode: status.OK,
     success: true,

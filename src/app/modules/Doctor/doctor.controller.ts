@@ -37,6 +37,7 @@ const getSingleDoctorFromDB: RequestHandler = catchAsync(async (req, res) => {
 const updateDoctorIntoDB: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
+  console.log(data);
   const result = await DoctorService.updateDoctorIntoDB(id, data);
 
   sendResponse(res, {

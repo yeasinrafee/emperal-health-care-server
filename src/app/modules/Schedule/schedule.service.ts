@@ -89,8 +89,7 @@ const getAllSchedulesFromDB = async (
   user: TAuthUser
 ) => {
   const { startDate, endDate, ...filterData } = params;
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(options);
+  const { page, limit, skip } = paginationHelper.calculatePagination(options);
 
   const andConditions: Prisma.ScheduleWhereInput[] = [];
   const whereConditions: Prisma.ScheduleWhereInput = { AND: andConditions };
